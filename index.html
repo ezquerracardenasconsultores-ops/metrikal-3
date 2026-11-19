@@ -1,0 +1,549 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CARAJÍA FIGHTER — Amílcar vs Cariñito</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#070d1b;color:#fff;font-family:Arial,sans-serif}
+:root{--yellow:#ffed65;--green:#88ee5a;--red:#f65743}
+.pixel{font-family:"Press Start 2P","Courier New",monospace;line-height:1.6;text-shadow:3px 3px 0 #111}
+.stage{
+ position:relative;width:100%;aspect-ratio:1672/941;
+ min-height:480px;overflow:hidden;background:#122850;
+ border-bottom:8px solid #8b571c
+}
+.stage-image{
+ position:absolute;inset:0;width:100%;height:100%;
+ object-fit:cover;image-rendering:pixelated;z-index:0
+}
+.stage:after{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(180deg,#030b21aa,transparent 30%,#03081222 75%,#020713aa);
+ z-index:1
+}
+.stage-content{position:relative;z-index:2;width:min(1400px,98%);margin:auto}
+.score{
+ display:flex;justify-content:space-between;
+ padding:12px;color:var(--yellow);
+ font-size:clamp(9px,1.4vw,18px)
+}
+.hud{
+ display:grid;grid-template-columns:1fr 100px 1fr;
+ gap:12px;align-items:start
+}
+.fighter{min-width:0;padding:8px;background:#06112a88}
+.fighter h2{
+ margin:0 0 5px;font-size:clamp(12px,2vw,22px);
+ color:#ffe894
+}
+.right{text-align:right}
+.right .buttons{justify-content:flex-end}
+.health{
+ height:36px;border:5px solid #111;background:#571c22;
+ box-shadow:0 0 0 3px #fff29e,4px 5px 0 #000
+}
+.fill{
+ width:0;height:100%;
+ background:linear-gradient(#ecff83,#70d94c);
+ transition:width 1s ease
+}
+.right .fill{
+ margin-left:auto;
+ background:linear-gradient(#ffc661,#e75b31)
+}
+.value{margin-top:10px;font-size:12px;font-weight:bold;text-shadow:2px 2px #000}
+.buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+button,.arcade-link{
+ cursor:pointer;background:#ffdc57;color:#18120a;
+ padding:10px;border:3px solid #1d1d1d;
+ box-shadow:3px 4px 0 #000b;font-weight:900;
+ text-decoration:none;font-size:12px
+}
+button:hover,.arcade-link:hover{background:#fff29a}
+.center{text-align:center}
+.ko{
+ background:#ffe36b;color:#a22217;
+ border:5px solid #54220b;
+ padding:12px 3px;font-size:24px;
+ box-shadow:4px 5px #000
+}
+.timer{color:#ffce56;font-size:23px;margin-top:8px}
+.round{
+ text-align:center;background:#061126de;
+ border:3px solid #e7c267;
+ max-width:610px;margin:25px auto 0;
+ padding:12px;box-shadow:4px 5px #0008
+}
+.round h3{font-size:clamp(11px,1.4vw,17px);color:#ffe875;margin:5px}
+.round p{font-size:13px;margin:6px}
+.modes{
+ display:flex;justify-content:center;gap:12px;
+ margin-top:15px;flex-wrap:wrap
+}
+.modes button{background:#112349;color:white;border-color:#e6c45e}
+.modes button.active{background:#ffe26b;color:#151515}
+.bottom-caption{
+ position:absolute;z-index:2;bottom:20px;left:50%;
+ transform:translateX(-50%);width:min(720px,90%);
+ background:#031026c9;text-align:center;
+ padding:12px;border:2px solid #c4a15d;
+ font-size:12px;line-height:1.7
+}
+main{background:linear-gradient(#10213b,#070d19);padding:35px 0}
+.wrap{width:min(1250px,94%);margin:auto}
+h1,h3{color:#ffe571}
+h1{font-size:clamp(16px,2.5vw,25px)}
+.dashboard{
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:12px;margin:22px 0
+}
+.card{background:#122640;padding:18px;border:1px solid #506889}
+.card span{font-size:12px;color:#bdcee4}
+.card strong{display:block;font-size:27px;color:#ffed87;margin-top:7px}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.panel{padding:20px;background:#101d32;border:2px solid #334965}
+.stat{
+ display:flex;justify-content:space-between;
+ border-bottom:1px solid #ffffff33;
+ padding:10px 0;gap:15px
+}
+.stat strong{color:#ffe87d}
+.notice{
+ border-left:5px solid #ffd859;background:#1b2d45;
+ padding:16px;margin:22px 0;font-size:13px;line-height:1.7
+}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+select,input{
+ padding:12px;background:#1b2d46;color:#fff;
+ border:1px solid #647f9c
+}
+input{flex:1;min-width:170px}
+.tablewrap{overflow-x:auto}
+table{width:100%;min-width:850px;border-collapse:collapse;font-size:13px}
+th,td{padding:11px;border-bottom:1px solid #354660;text-align:left}
+th{background:#274261;color:#ffe67a;white-space:nowrap}
+tr:hover{background:#1c304c}
+td a{color:#76d6ff}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0}
+footer{
+ text-align:center;padding:24px;background:#050812;
+ color:#aebbd0;font-size:12px;line-height:1.7
+}
+@media(max-width:800px){
+ .hud{grid-template-columns:1fr 55px 1fr;gap:5px}
+ .fighter{padding:5px}
+ .health{height:24px;border-width:3px}
+ .ko{font-size:14px;padding:8px 0}
+ .timer{font-size:15px}
+ .fighter h2{font-size:12px}
+ .score{font-size:9px}
+ .dashboard{grid-template-columns:1fr 1fr}
+ .comparison{grid-template-columns:1fr}
+ .stage{min-height:540px}
+ .bottom-caption{bottom:8px}
+ .buttons button{padding:6px;font-size:10px}
+}
+</style>
+</head>
+
+<body>
+
+<section class="stage">
+
+<!-- IMAGEN ORIGINAL DEL ESCENARIO, COMPRIMIDA
+     E INTEGRADA EN EL MISMO ARCHIVO -->
+<img class="stage-image" alt="Escenario arcade de los sarcófagos de Carajía"
+src="data:image/webp;base64,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">
+
+<div class="stage-content">
+<div class="score pixel">
+ <span>1P 316900</span>
+ <span>HI 316900</span>
+ <span>INSERT COIN</span>
+</div>
+
+<div class="hud">
+
+<div class="fighter">
+ <h2 class="pixel">AMÍLCAR</h2>
+ <div class="health"><div class="fill" id="lifeA"></div></div>
+ <div class="value" id="valueA"></div>
+ <div class="buttons">
+  <button onclick="openRecords('A','F')">FB MÉTRICAS</button>
+  <button onclick="openRecords('A','T')">TT MÉTRICAS</button>
+ </div>
+</div>
+
+<div class="center">
+ <div class="ko pixel">K.O.</div>
+ <div class="timer pixel">99</div>
+</div>
+
+<div class="fighter right">
+ <h2 class="pixel">CARIÑITO</h2>
+ <div class="health"><div class="fill" id="lifeC"></div></div>
+ <div class="value" id="valueC"></div>
+ <div class="buttons">
+  <button onclick="openRecords('C','F')">FB MÉTRICAS</button>
+  <button onclick="openRecords('C','T')">TT MÉTRICAS</button>
+ </div>
+</div>
+
+</div>
+
+<div class="round">
+ <h3 class="pixel" id="roundTitle">ROUND 01 · FACEBOOK</h3>
+ <p id="roundValues"></p>
+</div>
+
+<div class="modes">
+ <button class="active" id="buttonF" onclick="changeRound('F')">
+ FACEBOOK
+ </button>
+ <button id="buttonT" onclick="changeRound('T')">
+ TIKTOK
+ </button>
+</div>
+</div>
+
+<div class="bottom-caption">
+ ESCENARIO: SARCÓFAGOS DE CARAJÍA · AMAZONAS
+ <br>
+ MARCADOR BASADO EN REPRODUCCIONES PÚBLICAS.
+ NO REPRESENTA INTENCIÓN DE VOTO.
+</div>
+</section>
+
+<main>
+<div class="wrap">
+
+<h1 class="pixel">PANEL DE MÉTRICAS</h1>
+
+<div class="dashboard">
+ <div class="card"><span>PUBLICACIONES</span><strong>40</strong></div>
+ <div class="card"><span>REPRODUCCIONES</span><strong>225.612</strong></div>
+ <div class="card"><span>INTERACCIONES</span><strong>10.384</strong></div>
+ <div class="card"><span>PLATAFORMAS</span><strong>2</strong></div>
+</div>
+
+<div class="comparison">
+<div class="panel">
+ <h3>FACEBOOK</h3>
+ <div class="stat"><span>Publicaciones por cuenta</span><strong>5</strong></div>
+ <div class="stat"><span>Vistas Amílcar</span><strong>39.760</strong></div>
+ <div class="stat"><span>Vistas Cariñito</span><strong>21.840</strong></div>
+ <div class="stat"><span>Interacciones Amílcar</span><strong>1.542</strong></div>
+ <div class="stat"><span>Interacciones Cariñito</span><strong>723</strong></div>
+</div>
+
+<div class="panel">
+ <h3>TIKTOK</h3>
+ <div class="stat"><span>Videos por cuenta</span><strong>15</strong></div>
+ <div class="stat"><span>Vistas Amílcar</span><strong>51.856</strong></div>
+ <div class="stat"><span>Vistas Cariñito</span><strong>112.156</strong></div>
+ <div class="stat"><span>Interacciones Amílcar</span><strong>2.167</strong></div>
+ <div class="stat"><span>Interacciones Cariñito</span><strong>5.952</strong></div>
+</div>
+</div>
+
+<div class="notice">
+ <strong>METODOLOGÍA:</strong>
+ La barra de vida compara las reproducciones registradas en
+ la plataforma seleccionada. En Facebook se incluyen cuatro
+ Reels de Amílcar y tres de Cariñito. Las fotografías no
+ tienen visualizaciones disponibles. Las muestras de TikTok
+ abarcan períodos distintos. Son estadísticas de publicaciones
+ públicas, no datos de intención electoral.
+</div>
+
+<h1 class="pixel" id="recordsTitle">PUBLICACIONES Y FUENTES</h1>
+
+<div class="controls">
+ <select id="person" onchange="render()">
+  <option value="all">Ambos candidatos</option>
+  <option value="A">Amílcar</option>
+  <option value="C">Cariñito</option>
+ </select>
+
+ <select id="network" onchange="render()">
+  <option value="all">Ambas redes</option>
+  <option value="F">Facebook</option>
+  <option value="T">TikTok</option>
+ </select>
+
+ <select id="sort" onchange="render()">
+  <option value="views">Más vistas</option>
+  <option value="interactions">Más interacciones</option>
+  <option value="date">Más recientes</option>
+ </select>
+
+ <input id="search" placeholder="Buscar temática..."
+ oninput="render()">
+</div>
+
+<p id="recordCount"></p>
+
+<div class="tablewrap">
+<table>
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Candidato</th>
+<th>Red</th>
+<th>Temática</th>
+<th>Vistas</th>
+<th>Me gusta</th>
+<th>Comentarios</th>
+<th>Compartidos</th>
+<th>Interacciones</th>
+<th>Fuente</th>
+</tr>
+</thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+
+<div class="actions">
+<button onclick="downloadCSV()">DESCARGAR CSV</button>
+<button onclick="downloadJSON()">DESCARGAR JSON</button>
+<button onclick="window.print()">GUARDAR COMO PDF</button>
+</div>
+
+</div>
+</main>
+
+<footer>
+CARAJÍA FIGHTER · AMAZONAS
+<br>
+Datos públicos recopilados el 18 de noviembre de 2026.
+<br>
+Presentación descriptiva de actividad digital.
+</footer>
+
+<script>
+// BASE DE 40 PUBLICACIONES
+// A = AMÍLCAR, C = CARIÑITO
+// F = FACEBOOK, T = TIKTOK
+// '-' = REPRODUCCIONES NO DISPONIBLES
+
+const RAW=`
+A|F|18/11|6539|92|45|10|Mensajes de campaña|https://www.facebook.com/reel/1651551783124397/
+A|F|17/11|-|208|37|27|Encuentros territoriales|https://www.facebook.com/permalink.php?story_fbid=pfbid0Mqjjc89SwW6YeP25BSTRvmF7cnkRSR2TiU1B7cGRKBgvGNHQqno8XhL72z4cUM12l&id=61567838240210
+A|F|17/11|3017|161|24|24|Encuentros territoriales|https://www.facebook.com/reel/1502807304993800/
+A|F|17/11|22541|262|254|53|Mensajes de campaña|https://www.facebook.com/reel/1133280286087793/
+A|F|16/11|7663|266|48|31|Encuentros territoriales|https://www.facebook.com/reel/1516251343672120/
+C|F|18/11|670|74|26|8|Propuestas y asuntos públicos|https://www.facebook.com/reel/2672486846512990/
+C|F|17/11|19595|186|48|57|Aclaraciones públicas|https://www.facebook.com/reel/2691048311407292/
+C|F|17/11|1575|116|27|8|Encuentros y adhesiones|https://www.facebook.com/reel/1479607764101261/
+C|F|17/11|-|69|17|3|Encuentros y adhesiones|https://www.facebook.com/permalink.php?story_fbid=pfbid0tdyfKix9WmPN24xxFyG4ebxPtW8CQrwxMiNBtkE4iF9qo9tUNiXKKQDLGBUiC6Ezl&id=61578168690690
+C|F|17/11|-|62|20|2|Encuentros y adhesiones|https://www.facebook.com/permalink.php?story_fbid=pfbid031yTbG6Vw1ffbHK5SUHfZkzMLBEXgq2254o4axSKGtqSHqNoTtpVYvVvNwV3exzSil&id=61578168690690
+A|T|18/11|229|10|0|0|Cultura y gastronomía|https://www.tiktok.com/@amilcardiazoficial/video/7709600430933740801
+A|T|18/11|423|48|1|0|Encuentros territoriales|https://www.tiktok.com/@amilcardiazoficial/video/7709588000673402130
+A|T|18/11|490|73|3|0|Encuentros territoriales|https://www.tiktok.com/@amilcardiazoficial/video/7709577649596714241
+A|T|18/11|2120|65|11|6|Mensajes de campaña|https://www.tiktok.com/@amilcardiazoficial/video/7709527477642693889
+A|T|18/11|3328|61|10|8|Mensajes de campaña|https://www.tiktok.com/@amilcardiazoficial/video/7709520020841286920
+A|T|17/11|1046|30|1|1|Mensajes de campaña|https://www.tiktok.com/@amilcardiazoficial/video/7709289760354864385
+A|T|17/11|366|24|1|1|Encuentros territoriales|https://www.tiktok.com/@amilcardiazoficial/video/7709287656571604225
+A|T|17/11|647|60|3|2|Encuentros territoriales|https://www.tiktok.com/@amilcardiazoficial/video/7709172882353425671
+A|T|17/11|6047|135|22|25|Mensajes de campaña|https://www.tiktok.com/@amilcardiazoficial/video/7709132070991301896
+A|T|16/11|1197|136|6|5|Encuentros territoriales|https://www.tiktok.com/@amilcardiazoficial/video/7708777651632213300
+A|T|15/11|15000|438|48|28|Propuestas y asuntos públicos|https://www.tiktok.com/@amilcardiazoficial/video/7708564440949525766
+A|T|15/11|1722|107|10|3|Encuentros territoriales|https://www.tiktok.com/@amilcardiazoficial/video/7708436516678618369
+A|T|15/11|8633|414|18|17|Encuentros territoriales|https://www.tiktok.com/@amilcardiazoficial/video/7708449286312185109
+A|T|15/11|8924|172|34|8|Mensajes de campaña|https://www.tiktok.com/@amilcardiazoficial/video/7708434469845257524
+A|T|13/11|1684|115|4|3|Mensajes de campaña|https://www.tiktok.com/@amilcardiazoficial/video/7707803928619928833
+C|T|18/11|316|33|7|18|Propuestas y asuntos públicos|https://www.tiktok.com/@cariito.gob.regio/video/7709573529531862290
+C|T|17/11|1431|156|8|14|Encuentros territoriales|https://www.tiktok.com/@cariito.gob.regio/video/7709311440208809234
+C|T|17/11|1054|110|5|14|Encuentros territoriales|https://www.tiktok.com/@cariito.gob.regio/video/7709189214885235976
+C|T|16/11|9897|313|7|23|Cultura y música|https://www.tiktok.com/@cariito.gob.regio/video/7708844412813511937
+C|T|15/11|6392|316|18|18|Encuentros territoriales|https://www.tiktok.com/@cariito.gob.regio/video/7708517459300470034
+C|T|14/11|1363|114|3|13|Propuestas y asuntos públicos|https://www.tiktok.com/@cariito.gob.regio/video/7708246374810160391
+C|T|14/11|1548|81|5|9|Otros|https://www.tiktok.com/@cariito.gob.regio/video/7708173798821940487
+C|T|14/11|28800|1180|90|153|Propuestas y asuntos públicos|https://www.tiktok.com/@cariito.gob.regio/video/7708112364503174407
+C|T|13/11|1591|102|5|18|Mensajes de campaña|https://www.tiktok.com/@cariito.gob.regio/video/7707690243104738568
+C|T|12/11|5371|257|30|36|Cultura y entretenimiento|https://www.tiktok.com/@cariito.gob.regio/video/7707501812269468980
+C|T|12/11|908|42|3|18|Propuestas y asuntos públicos|https://www.tiktok.com/@cariito.gob.regio/video/7707303647654317319
+C|T|10/11|3685|182|9|24|Encuentros y adhesiones|https://www.tiktok.com/@cariito.gob.regio/video/7706738724410772743
+C|T|10/11|19100|747|31|37|Cultura y música|https://www.tiktok.com/@cariito.gob.regio/video/7706617324714937607
+C|T|07/11|13500|655|28|42|Cultura y música|https://www.tiktok.com/@cariito.gob.regio/video/7705448655955758354
+C|T|07/11|17200|866|54|58|Encuentros y adhesiones|https://www.tiktok.com/@cariito.gob.regio/video/7705419576648928518
+`;
+
+const data=RAW.trim().split("\n").map(line=>{
+ const x=line.trim().split("|");
+ return{
+  person:x[0],
+  network:x[1],
+  date:x[2],
+  views:x[3]==="-"?null:Number(x[3]),
+  likes:Number(x[4]),
+  comments:Number(x[5]),
+  shares:Number(x[6]),
+  theme:x[7],
+  url:x[8],
+  interactions:Number(x[4])+Number(x[5])+Number(x[6])
+ };
+});
+
+const number=n=>n===null?"—":
+ new Intl.NumberFormat("es-PE").format(n);
+
+function changeRound(net){
+ const subset=data.filter(x=>x.network===net);
+ const a=subset.filter(x=>x.person==="A");
+ const c=subset.filter(x=>x.person==="C");
+
+ const sum=(arr,key)=>
+  arr.reduce((total,x)=>total+(x[key]||0),0);
+
+ const av=sum(a,"views");
+ const cv=sum(c,"views");
+ const total=av+cv;
+
+ const pa=av/total*100;
+ const pc=cv/total*100;
+
+ document.getElementById("lifeA").style.width=pa+"%";
+ document.getElementById("lifeC").style.width=pc+"%";
+
+ document.getElementById("valueA").textContent=
+  pa.toFixed(1)+"% DE VISTAS REGISTRADAS";
+
+ document.getElementById("valueC").textContent=
+  pc.toFixed(1)+"% DE VISTAS REGISTRADAS";
+
+ document.getElementById("roundTitle").textContent=
+  net==="F"?"ROUND 01 · FACEBOOK":"ROUND 02 · TIKTOK";
+
+ document.getElementById("roundValues").textContent=
+  "AMÍLCAR: "+number(av)+
+  "  |  CARIÑITO: "+number(cv);
+
+ document.getElementById("buttonF").classList.toggle(
+  "active",net==="F");
+
+ document.getElementById("buttonT").classList.toggle(
+  "active",net==="T");
+}
+
+function openRecords(person,network){
+ document.getElementById("person").value=person;
+ document.getElementById("network").value=network;
+ render();
+ document.getElementById("recordsTitle")
+  .scrollIntoView({behavior:"smooth"});
+}
+
+function render(){
+ const person=document.getElementById("person").value;
+ const network=document.getElementById("network").value;
+ const sort=document.getElementById("sort").value;
+ const search=document.getElementById("search")
+  .value.toLowerCase();
+
+ let rows=data.filter(x=>
+  (person==="all"||x.person===person)&&
+  (network==="all"||x.network===network)&&
+  x.theme.toLowerCase().includes(search)
+ );
+
+ rows.sort((a,b)=>{
+  if(sort==="date"){
+   const key=x=>x.date.substring(3)+x.date.substring(0,2);
+   return key(b).localeCompare(key(a));
+  }
+  return (b[sort]||0)-(a[sort]||0);
+ });
+
+ document.getElementById("recordCount").textContent=
+  rows.length+" de "+data.length+" publicaciones";
+
+ const tbody=document.getElementById("rows");
+ tbody.innerHTML="";
+
+ rows.forEach(x=>{
+  const tr=document.createElement("tr");
+  const values=[
+   x.date+"/2026",
+   x.person==="A"?"Amílcar":"Cariñito",
+   x.network==="F"?"Facebook":"TikTok",
+   x.theme,
+   number(x.views),
+   number(x.likes),
+   number(x.comments),
+   number(x.shares),
+   number(x.interactions)
+  ];
+
+  values.forEach(v=>{
+   const td=document.createElement("td");
+   td.textContent=v;
+   tr.appendChild(td);
+  });
+
+  const td=document.createElement("td");
+  const a=document.createElement("a");
+  a.href=x.url;
+  a.target="_blank";
+  a.rel="noopener noreferrer";
+  a.textContent="Abrir publicación";
+  td.appendChild(a);
+  tr.appendChild(td);
+  tbody.appendChild(tr);
+ });
+}
+
+function downloadFile(text,mime,name){
+ const blob=new Blob([text],{type:mime});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=name;
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+function downloadCSV(){
+ const header=[
+  "Candidato","Red","Fecha","Vistas",
+  "Me gusta","Comentarios","Compartidos",
+  "Interacciones","Tema","URL"
+ ];
+
+ const rows=[header,...data.map(x=>[
+  x.person==="A"?"Amílcar Díaz":"Segundo Hernández Cariñito",
+  x.network==="F"?"Facebook":"TikTok",
+  x.date+"/2026",
+  x.views===null?"":x.views,
+  x.likes,x.comments,x.shares,
+  x.interactions,x.theme,x.url
+ ])];
+
+ const csv=rows.map(row=>row.map(v=>
+  '"'+String(v).replaceAll('"','""')+'"'
+ ).join(",")).join("\r\n");
+
+ downloadFile("\uFEFF"+csv,
+  "text/csv;charset=utf-8",
+  "metricas_amilcar_carinito.csv");
+}
+
+function downloadJSON(){
+ downloadFile(JSON.stringify(data,null,2),
+  "application/json;charset=utf-8",
+  "metricas_amilcar_carinito.json");
+}
+
+changeRound("F");
+render();
+</script>
+
+</body>
+</html>
